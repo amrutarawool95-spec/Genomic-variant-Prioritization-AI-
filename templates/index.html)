@@ -5,124 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genomic Variant Prioritization AI</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            margin: 0;
-            padding: 40px;
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            background-color: #fff;
-            max-width: 800px;
-            width: 100%;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-        }
-        .description {
-            text-align: center;
-            color: #7f8c8d;
-            margin-bottom: 30px;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 20px;
-        }
-        label {
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-        input[type="text"] {
-            padding: 12px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #3498db;
-            color: white;
-            padding: 12px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        .results {
-            display: none;
-            margin-top: 30px;
-            padding: 20px;
-            border-radius: 8px;
-            background-color: #f8f9fa;
-            border-left: 5px solid #3498db;
-        }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { background-color: #fff; max-width: 750px; width: 100%; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 20px; }
+        h1 { color: #2c3e50; text-align: center; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #7f8c8d; margin-bottom: 30px; font-size: 14px; }
+        .form-group { display: flex; flex-direction: column; margin-bottom: 20px; }
+        label { font-weight: 600; margin-bottom: 8px; color: #34495e; }
+        input[type="text"] { padding: 12px; font-size: 16px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; }
+        input[type="text"]:focus { border-color: #3498db; }
+        button { background-color: #3498db; color: white; padding: 14px; font-size: 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.2s; }
+        button:hover { background-color: #2980b9; }
+        .results { display: none; margin-top: 30px; padding: 20px; border-radius: 8px; background-color: #f8f9fa; border-left: 5px solid #bdc3c7; }
         .pathogenic { border-left-color: #e74c3c; }
         .benign { border-left-color: #2ecc71; }
-        
-        .score-box {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-        .reason-list {
-            list-style-type: none;
-            padding: 0;
-        }
-        .reason-item {
-            background: #fff;
-            margin-bottom: 10px;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-        }
-        .impact-positive { color: #e74c3c; font-weight: bold; }
-        .impact-negative { color: #3498db; font-weight: bold; }
+        .score-box { font-size: 20px; font-weight: bold; margin-bottom: 20px; }
+        .reason-list { list-style: none; padding: 0; margin: 0; }
+        .reason-item { background: #fff; margin-bottom: 10px; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; gap: 15px; }
+        .impact-positive { color: #e74c3c; font-weight: bold; white-space: nowrap; }
+        .impact-negative { color: #3498db; font-weight: bold; white-space: nowrap; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Explainable AI for Genomic Variants</h1>
-    <p class="description">Enter a genetic variant to receive a pathogenicity probability score and transparent, biological reasoning powered by XGBoost and SHAP.</p>
+    <h1>Explainable AI Variant Classifier</h1>
+    <div class="subtitle">Genomic Variant Prioritization and Pathogenicity Assessment Pipeline</div>
 
     <div class="form-group">
-        <label for="variantInput">Genetic Variant (e.g., BRCA1 p.M1775R, TTN variant):</label>
-        <input type="text" id="variantInput" placeholder="Type variant here...">
+        <label for="variantInput">Genetic Variant Identity:</label>
+        <input type="text" id="variantInput" placeholder="e.g., BRCA1 p.M1775R or TTN variant">
     </div>
-    <button onclick="analyzeVariant()">Analyze Variant</button>
+    <button onclick="analyzeVariant()">Run Pathogenicity Analysis</button>
 
     <div id="resultsPanel" class="results">
         <div class="score-box">
-            Classification: <span id="classOutput"></span> (Score: <span id="scoreOutput"></span>)
+            Prediction: <span id="classOutput"></span> <br>
+            <span style="font-size: 15px; font-weight: normal; color: #555;">Pathogenicity Probability Score: <strong id="scoreOutput"></strong></span>
         </div>
-        <h3>Mechanistic Reasoning (SHAP Attribution):</h3>
-        <ul id="reasonList" class="reason-list">
-            </ul>
+        <h4 style="margin-bottom: 10px; color: #2c3e50;">SHAP Feature Attribution (Mechanistic Reasoning):</h4>
+        <ul id="reasonList" class="reason-list"></ul>
     </div>
 </div>
 
 <script>
     async function analyzeVariant() {
-        const variant = document.getElementById('variantInput').value;
-        if (!variant) return alert("Please enter a variant.");
+        const variant = document.getElementById('variantInput').value.trim();
+        if (!variant) return alert("Please enter a variant identifier.");
 
         const button = document.querySelector('button');
-        button.innerText = "Analyzing...";
+        button.innerText = "Processing Pipeline...";
+        button.disabled = true;
 
         try {
             const response = await fetch('/predict', {
@@ -132,40 +64,34 @@
             });
             const data = await response.json();
 
-            // Update UI
+            if (data.error) throw new Error(data.error);
+
             document.getElementById('resultsPanel').style.display = 'block';
             document.getElementById('classOutput').innerText = data.classification;
-            document.getElementById('scoreOutput').innerText = data.score;
+            document.getElementById('scoreOutput').innerText = (data.score * 100).toFixed(0) + "%";
 
-            // Apply conditional styling based on classification
             const panel = document.getElementById('resultsPanel');
             panel.className = 'results ' + (data.classification === 'PATHOGENIC' ? 'pathogenic' : 'benign');
 
-            // Populate the reasoning list
             const reasonList = document.getElementById('reasonList');
             reasonList.innerHTML = '';
             data.reasons.forEach(reason => {
                 const li = document.createElement('li');
                 li.className = 'reason-item';
-                
                 const isPositive = reason.impact.startsWith('+');
-                const impactClass = isPositive ? 'impact-positive' : 'impact-negative';
-
                 li.innerHTML = `
                     <span>${reason.feature}</span>
-                    <span class="${impactClass}">${reason.impact}</span>
+                    <span class="${isPositive ? 'impact-positive' : 'impact-negative'}">${reason.impact}</span>
                 `;
                 reasonList.appendChild(li);
             });
-
         } catch (error) {
-            alert("An error occurred during prediction.");
+            alert("Error running analysis: " + error.message);
         } finally {
-            button.innerText = "Analyze Variant";
+            button.innerText = "Run Pathogenicity Analysis";
+            button.disabled = false;
         }
     }
 </script>
-
 </body>
 </html>
-
